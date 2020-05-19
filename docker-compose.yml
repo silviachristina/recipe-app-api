@@ -1,0 +1,16 @@
+# Latest version of the docker compose
+version: "3"
+ 
+# Define the services that are make up our application
+services:
+  app: # define we gonna have a service called app
+    build:
+      context: . # define the current directory
+    ports:
+      - "8000:8000" # map ou port from port 8000 on our host to run on port 8000 on our image
+    volumes: #allows us to get the updates from our local directory to the docker image in the real time, automatically update the changes don't need restart
+      - "./app:/app" # Maps the local app directory to the app directory image
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000" 
+    # Means will run the command using shell, this commands will run the django development server available on all ip address that runs on 0.0.0.0.0
+
