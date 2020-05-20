@@ -1,0 +1,16 @@
+# Tells what language well let travis to be
+language: python
+python:
+  - "3.6" # Doesn't matter because the correct version is inside the docker
+
+# Tells whats services we need to use, just the docker because all the services will be as a subservices in our Docker configuration file
+services: 
+  - docker
+
+# Scripts that travis will run before it executes, in this case will use pip to install the docker compose
+before_script: pip install docker-compose
+
+# Run the following script that will run python using a lint tool called flake8
+script: 
+  - docker-compose run app sh - c "python manage.py test && flake8"
+
