@@ -10,7 +10,14 @@ ENV PYTHONUNBUFFERED 1
 # Install the dependencies
 # Copy the requirements.txt file in our folder to the image and install using pip all the dependencies inside the requirements.txt file
 COPY ./requirements.txt /requirements.txt
+# Uses the package name that comes with alpine, apk is the name of the package, update before install, and --no-cache means don't install the registry index on your docker file, is best practice, don't include any extra dependencies,  
+RUN apk add --update --no-cache postgresql-client
+# --virtual setup a alias for you dependencies to easily remove later
+RUN apk add --update --no-cache --virtual .tmp-build-deps \
+        gcc libc-dev linux-headers postgresql-dev
 RUN pip install -r /requirements.txt
+# Now delete the dependencies 
+RUN apk del .tmp-build-deps
 
 # Create a directory to store the aplication source code
 #  Create a folderinside the image
