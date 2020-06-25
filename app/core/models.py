@@ -1,9 +1,24 @@
+# used to generate the uuid
+import uuid
+# used to create a valid path for our file destination
+import os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
                                         PermissionsMixin
 
 # Recomended way to retreive user auth
 from django.conf import settings
+
+
+def recipe_image_file_path(instance, filename):
+    """Generate file path for new recipe image"""
+    # Split the string and return the last part (the file extension)
+    ext = filename.split('.')[-1]
+    # creates a string with a randon uuid and the file extension
+    filename = f'{uuid.uuid4()}.{ext}'
+    # join the destination path we want store the file
+    # help function that allows join two strings together to make a valid path
+    return os.path.join('uploads/recipe/', filename)
 
 
 class UserManager(BaseUserManager):
@@ -85,6 +100,9 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+    # Optional, pass the function to upload_to, pass the reference
+    # Call everytime we upload, will be called in the background by django
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def __str__(self):
         return self.title
